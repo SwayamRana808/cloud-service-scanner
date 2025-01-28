@@ -1,0 +1,55 @@
+<script>
+    function toggleRegion_nacl(uniqueId) {
+        const regionTable = document.getElementById(uniqueId);
+        if (regionTable.style.display === "none" || regionTable.style.display === "") {
+            regionTable.style.display = "table"; // Show the table
+        } else {
+            regionTable.style.display = "none"; // Hide the table
+        }
+    }
+</script>
+{% set service_data = service_data or {} %}
+{% for region, nacls in service_data.items() %}
+<div>
+    <h3>
+        <!-- Ensure unique IDs by including 'nacl' in the ID -->
+        <button onclick="toggleRegion_nacl('nacl-{{ region }}')" style="cursor: pointer; background: none; border: none; font-size: 1.2em; color: #2a3138;">
+            ▼ Region: {{ region }}
+        </button>
+    </h3>
+    <table id="nacl-{{ region }}" style="display: none; margin-top: 10px; width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>Network ACL ID</th>
+                <th>VPC ID</th>
+                <th>Is Default</th>
+                <th>Issue</th>
+                <th>Risk Tags</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for nacl in nacls %}
+                {% if nacl.Issues %}
+                    {% for issue in nacl.Issues %}
+                        <tr class="{{ 'highlight-high' if 'HighRisk' in issue.RiskTags else ('highlight-medium' if 'MediumRisk' in issue.RiskTags else '') }}">
+                            <td>{{ nacl.NetworkAclId }}</td>
+                            <td>{{ nacl.VpcId }}</td>
+                            <td>{{ 'Yes' if nacl.IsDefault else 'No' }}</td>
+                            <td>{{ issue.Issue }}</td>
+                            <td>{{ issue.RiskTags | join(', ') }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr class="no-issues">
+                        <td>{{ nacl.NetworkAclId }}</td>
+                        <td>{{ nacl.VpcId }}</td>
+                        <td>{{ 'Yes' if nacl.IsDefault else 'No' }}</td>
+                        <td>None</td>
+                        <td>None</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endfor %}

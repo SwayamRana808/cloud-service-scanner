@@ -1,0 +1,46 @@
+<script>
+     function toggleRegion_sg(uniqueId) {
+        const regionTable = document.getElementById(uniqueId);
+        if (regionTable.style.display === "none" || regionTable.style.display === "") {
+            regionTable.style.display = "table"; // Show the table
+        } else {
+            regionTable.style.display = "none"; // Hide the table
+        }
+    }
+</script>
+{% set service_data = service_data or {} %}
+{% for region, security_groups in service_data.items() %}
+<div>
+    <h3>
+        <!-- Use a unique ID by appending 'sg-' to the region -->
+        <button onclick="toggleRegion_sg('sg-{{ region }}')" style="cursor: pointer; background: none; border: none; font-size: 1.2em; color: #2a3138;">
+            ▼ Region: {{ region }}
+        </button>
+    </h3>
+    <table id="sg-{{ region }}" style="display: none; margin-top: 10px; width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Group ID</th>
+            <th>Group Name</th>
+            <th>Description</th>
+            <th>VPC ID</th>
+            <th>Issue</th>
+            <th>Risk Tags</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for group in security_groups %}
+            {% for issue in group['Issues'] %}
+                <tr class="{{ 'highlight-high' if 'HighRisk' in issue['RiskTags'] else ('highlight-medium' if 'MediumRisk' in issue['RiskTags'] else '') }}">
+                    <td>{{ group['GroupId'] }}</td>
+                    <td>{{ group['GroupName'] }}</td>
+                    <td>{{ group['Description'] }}</td>
+                    <td>{{ group['VpcId'] }}</td>
+                    <td>{{ issue['Issue'] }}</td>
+                    <td>{{ issue['RiskTags'] | join(', ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endfor %}

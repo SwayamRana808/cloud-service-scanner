@@ -1,0 +1,41 @@
+<table>
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>User ID</th>
+            <th>Path</th>
+            <th>ARN</th>
+            <th>Create Date</th>
+            <th>Issue</th>
+            <th>Risk Tags</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set service_data = service_data or {} %}
+        {% for user in service_data %}
+            {% if user['Issues'] %}
+                {% for issue in user['Issues'] %}
+                    <tr class="{{ 'highlight-high' if 'HighRisk' in issue['RiskTags'] else ('highlight-medium' if 'MediumRisk' in issue['RiskTags'] else '') }}">
+                        <td>{{ user['UserName'] }}</td>
+                        <td>{{ user['UserId'] }}</td>
+                        <td>{{ user['Path'] }}</td>
+                        <td>{{ user['Arn'] }}</td>
+                        <td>{{ user['CreateDate'] }}</td>
+                        <td>{{ issue['Issue'] }}</td>
+                        <td>{{ issue['RiskTags'] | join(', ') }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr class="no-issues">
+                    <td>{{ user['UserName'] }}</td>
+                    <td>{{ user['UserId'] }}</td>
+                    <td>{{ user['Path'] }}</td>
+                    <td>{{ user['Arn'] }}</td>
+                    <td>{{ user['CreateDate'] }}</td>
+                    <td>None</td>
+                    <td>None</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>

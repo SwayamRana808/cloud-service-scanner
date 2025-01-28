@@ -1,13 +1,17 @@
-import boto3
-from app.config import AWS_ACCESS_KEY, AWS_SECRET_KEY, REGION_NAME
-def get_ec2_instances():
-    """
-    Retrieve all EC2 instances in the default region.
-    """
-    ec2_client = boto3.client('ec2', 
-                              aws_access_key_id=AWS_ACCESS_KEY,
-                              aws_secret_access_key=AWS_SECRET_KEY,
-                              region_name=REGION_NAME)
-    response = ec2_client.describe_instances()
-    instances = response.get('Reservations', [])
-    return instances
+# This file is used to import all the service functions from the respective service files and re-export them. This is done to make it easier to import all the service functions from a single file. 
+# Centralized imports and exports
+from app.services.ec2_service import get_ec2_instances 
+from app.services.iam_service import get_iam_users
+from app.services.s3_bucket_service import get_s3_buckets
+from app.services.rds_service import get_rds_instances
+from app.services.nacl_service import get_network_acls
+
+# Re-export all service functions
+__all__ = [
+    "get_ec2_instances",
+    "get_iam_users",
+    "get_s3_buckets",
+    "get_rds_instances",
+    "get_network_acls"
+]
+

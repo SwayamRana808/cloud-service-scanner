@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Security Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .highlight-high {
+            background-color: #ffcccc; /* Red for HighRisk */
+        }
+        .highlight-medium {
+            background-color: #ffdd99; /* Orange for MediumRisk */
+        }
+    </style>
+    <script>
+        function toggleService(serviceId) {
+            const serviceContent = document.getElementById(serviceId);
+            if (serviceContent.style.display === "none") {
+                serviceContent.style.display = "block";
+            } else {
+                serviceContent.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Cloud Security Dashboard</h1>
+    {% for service_name, service_data in services.items() %}
+        <h2>
+            <button onclick="toggleService('{{ service_name }}')" style="cursor: pointer; background: none; border: none; font-size: 1em; color: #050907;">
+                ▼ {{ service_name.upper() }} Data
+            </button>
+        </h2>
+        <div id="{{ service_name }}" style="display: block; margin-top: 10px;">
+            {% include "partials/" + service_name + ".html" %}
+        </div>
+    {% endfor %}
+</body>
+</html>

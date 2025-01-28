@@ -1,0 +1,56 @@
+<script>
+    function toggleRegion_ec2(regionId) {
+        const regionTable = document.getElementById(regionId);
+        if (regionTable.style.display === "none") {
+            regionTable.style.display = "table";
+        } else {
+            regionTable.style.display = "none";
+        }
+    }
+</script>
+{% set service_data = service_data or {} %}
+{% for region, reservations in service_data.items() %}
+<div>
+    <h3>
+        <button onclick="toggleRegion_ec2('ec2-{{ region }}')" style="cursor: pointer; background: none; border: none; font-size: 1.2em; color: #121b26;">
+            ▼ Region: {{ region }}
+        </button>
+    </h3>
+    <table id="ec2-{{ region }}" style="display: none; margin-top: 10px;">
+        <thead>
+            <tr>
+                <th>Instance ID</th>
+                <th>Instance Type</th>
+                <th>State</th>
+                <th>Issue</th>
+                <th>Risk Tags</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+                {% for instance in reservation['Instances'] %}
+                    {% if instance['Issues'] %}
+                        {% for issue in instance['Issues'] %}
+                            <tr class="{{ 'highlight-high' if 'HighRisk' in issue['RiskTags'] else ('highlight-medium' if 'MediumRisk' in issue['RiskTags'] else '') }}">
+                                <td>{{ instance['InstanceId'] }}</td>
+                                <td>{{ instance['InstanceType'] }}</td>
+                                <td>{{ instance['State']['Name'] }}</td>
+                                <td>{{ issue['Issue'] }}</td>
+                                <td>{{ issue['RiskTags'] | join(', ') }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="no-issues">
+                            <td>{{ instance['InstanceId'] }}</td>
+                            <td>{{ instance['InstanceType'] }}</td>
+                            <td>{{ instance['State']['Name'] }}</td>
+                            <td>None</td>
+                            <td>None</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endfor %}

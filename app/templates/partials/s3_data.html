@@ -1,0 +1,23 @@
+<table>
+    <thead>
+        <tr>
+            <th>Bucket Name</th>
+            <th>Region</th>
+            <th>Issue</th>
+            <th>Risk Tags</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set service_data = service_data or {} %}
+        {% for bucket in service_data %}
+            {% for issue in bucket['Issues'] %}
+                <tr class="{{ 'highlight-high' if 'HighRisk' in issue['RiskTags'] else ('highlight-medium' if 'MediumRisk' in issue['RiskTags'] else '') }}">
+                    <td>{{ bucket['Name'] }}</td>
+                    <td>{{ bucket['Region'] }}</td>
+                    <td>{{ issue['Issue'] }}</td>
+                    <td>{{ issue['RiskTags'] | join(', ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>

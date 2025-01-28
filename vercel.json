@@ -8,8 +8,12 @@
     ],
     "routes": [
       {
+        "src": "/scan/(.*)",
+        "dest": "/main.py"
+      },
+      {
         "src": "/(.*)",
-        "dest": "main.py"
+        "dest": "/main.py"
       }
     ]
   }

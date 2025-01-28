@@ -1,0 +1,46 @@
+<script>
+    function toggleRegionInstances(uniqueId) {
+        const regionTable = document.getElementById(uniqueId);
+        if (regionTable.style.display === "none" || regionTable.style.display === "") {
+            regionTable.style.display = "table"; // Show the table
+        } else {
+            regionTable.style.display = "none"; // Hide the table
+        }
+    }
+</script>
+{% set service_data = service_data or {} %}
+
+{% for region, instances in service_data.items() %}
+<div>
+    <h3>
+        <!-- Use a unique ID by appending 'instances-' to the region -->
+        <button onclick="toggleRegionInstances('instances-{{ region }}')" style="cursor: pointer; background: none; border: none; font-size: 1.2em; color: #2a3138;">
+            ▼ Region: {{ region }}
+        </button>
+    </h3>
+    <table id="instances-{{ region }}" style="display: none; margin-top: 10px; width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>Instance ID</th>
+                <th>Engine</th>
+                <th>Status</th>
+                <th>Issue</th>
+                <th>Risk Tags</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instance in instances %}
+                {% for issue in instance['Issues'] %}
+                    <tr class="{{ 'highlight-high' if 'HighRisk' in issue['RiskTags'] else ('highlight-medium' if 'MediumRisk' in issue['RiskTags'] else '') }}">
+                        <td>{{ instance['DBInstanceIdentifier'] }}</td>
+                        <td>{{ instance['Engine'] }}</td>
+                        <td>{{ instance['DBInstanceStatus'] }}</td>
+                        <td>{{ issue['Issue'] }}</td>
+                        <td>{{ issue['RiskTags'] | join(', ') }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endfor %}
