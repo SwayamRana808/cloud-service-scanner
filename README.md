@@ -53,6 +53,7 @@ Service Details: For each service, click on the region to expand and view specif
 Troubleshooting
 Issue with Redis connection: If you're having issues connecting to Redis, check the credentials and host/port configurations in the .env file. Make sure your Redis instance is accessible from your local machine or server.
 
+--Swayam Rana(Creator)
 Missing or incorrect data: Ensure that the correct data format is used for each cloud service. You may need to adjust the service_data structure for each service accordingly.
 
 
